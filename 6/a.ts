@@ -1,16 +1,16 @@
-const input: string = await Deno.readTextFile("./exampleInput3.txt");
-// const input: string = await Deno.readTextFile("./input.txt");
+// const input: string = await Deno.readTextFile("./exampleInput5.txt");
+const input: string = await Deno.readTextFile("./input.txt");
 
 const formattedInput = input.trimEnd();
 
 console.log(formattedInput);
 
-function slidingWindow(input: string, n: number) {
-	const windowCheck = input.slice(0, n - 1).split("");
+function slidingWindow(input: string, k: number) {
+	const windowCheck = input.slice(0, k - 1).split("");
 	console.log(windowCheck)
 
 	// init array
-	for (let i = n - 1; i < input.length;) {
+	for (let i = k - 1; i < input.length;) {
 		console.log(input[i])
 
 		const relativeIndexOfDup = windowCheck.indexOf(input[i]);
@@ -38,4 +38,21 @@ function slidingWindow(input: string, n: number) {
 	console.log([...windowCheck.keys()].join(""));
 }
 
-console.log(slidingWindow(formattedInput, 4));
+function hasDup(window: string) {
+	return /(.).*\1/.test(window);
+}
+
+// O(kn), where n is input.length and k is window size
+function getNumCharactersBeforeNoDupInWindow(input: string, k: number) {
+
+	for (let i = 0; i < input.length; i++) {
+		const windowCheck = input.slice(i, k + i);
+
+		if (hasDup(windowCheck) === false) return k + i;
+	}
+
+	return -1;
+}
+
+// console.log(slidingWindow(formattedInput, 4));
+console.log(getNumCharactersBeforeNoDupInWindow(formattedInput, 4))
