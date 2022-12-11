@@ -31,11 +31,6 @@ function moveKnot(currPositions: Positions, dir: Direction, mark: "head" | "tail
 		default:
 			currPositions[mark][0]++;
 	}
-
-	// if (mark === "tail") {
-	// 	// console.log(currPositions.tail)
-	// 	positionVisited.add(currPositions.tail.toString());
-	// }
 }
 
 function isInRadius(head: Coordinates, tail: Coordinates) {
@@ -76,8 +71,7 @@ function moveHead(currPositions: Positions, dir: Direction, num: number) {
 		moveKnot(currPositions, dir, "head");
 
 		followTail(currPositions, dir, prevHeadCoor);
-		console.log(currPositions.head, currPositions.tail, dir)
-
+		// console.log(currPositions.head, currPositions.tail, dir);
 	}
 }
 
@@ -90,14 +84,14 @@ function getCountOfUniquePositionsTailVisits(input: string[]) {
 	input.forEach(i => {
 		const [dir, num] = i.split(" ");
 
-		moveHead(currPositions, dir as Direction, +num)
-	})
+		moveHead(currPositions, dir as Direction, +num);
+	});
 
 	return positionVisited.size;
 }
 
 const positionVisited = new Set<string>();
-positionVisited.add("0,0")
+positionVisited.add("0,0");
 
 console.log(getCountOfUniquePositionsTailVisits(splitInput));
 // const test = [0, 0];
@@ -105,6 +99,6 @@ console.log(getCountOfUniquePositionsTailVisits(splitInput));
 // test[1]++
 // console.log(test)
 
-console.log(Array(...positionVisited))
+console.log(Array(...positionVisited));
 
-console.log(isInRadius([4, 2], [3, 0]))
+console.log(isInRadius([4, 2], [3, 0]));
