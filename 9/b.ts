@@ -6,7 +6,7 @@ const splitInput = input
 	.trimEnd()
 	.split("\r\n");
 
-console.log(splitInput);
+// console.log(splitInput);
 
 type Coordinates = [number, number];
 
@@ -26,50 +26,35 @@ function moveKnot(currPositions: Positions, dir: Direction, knotIndex: number) {
 			currPositions[knotIndex][0]--;
 			break;
 		case "R":
-		default:
 			currPositions[knotIndex][0]++;
 	}
 }
 
-function isInRadius(head: Coordinates, tail: Coordinates) {
-	const [hx, hy] = head;
-	const [tx, ty] = tail;
+function isInRadius(x: number, y: number) {
+	const ax = Math.abs(x);
+	const ay = Math.abs(y);
 
-	const dx = Math.abs(hx - tx);
-	const dy = Math.abs(hy - ty);
-
-	return (dx <= 1 && dy <= 1);
+	return (ax <= 1 && ay <= 1);
 }
 
-// Could later refactor so that it returns [] of dir for diagonal and horizontal/vertical
-function determineMovesForAxis(head: Coordinates, tail: Coordinates): Direction[] {
+function determineMoves(head: Coordinates, tail: Coordinates): Direction[] {
 	const [hx, hy] = head;
 	const [tx, ty] = tail;
 
 	const dx = hx - tx;
 	const dy = hy - ty;
 
-	if (dx === 0) {
+	if (isInRadius(dx, dy)) return [];
+
+	// Move horizontally/vertically
+	if (dx === 0 || dy === 0) {
 		if (dy > 0) return ["U"];
 		if (dy < 0) return ["D"];
-	}
-
-	if (dy === 0) {
 		if (dx > 0) return ["R"];
 		if (dx < 0) return ["L"];
 	}
 
-	return [];
-}
-
-// Could later refactor so that it returns [] of dir for diagonal and horizontal/vertical
-function determineMovesForDiagonal(head: Coordinates, tail: Coordinates): Direction[] {
-	const [hx, hy] = head;
-	const [tx, ty] = tail;
-
-	const dx = hx - tx;
-	const dy = hy - ty;
-
+	// Move Diagonally
 	if (dx > 0 && dy > 0) return ["U", "R"];
 	if (dx < 0 && dy > 0) return ["U", "L"];
 	if (dx > 0 && dy < 0) return ["D", "R"];
@@ -78,50 +63,28 @@ function determineMovesForDiagonal(head: Coordinates, tail: Coordinates): Direct
 	return [];
 }
 
-function followTail(currPositions: Positions, dir: Direction, currTailIndex: number) {
+function followTail(currPositions: Positions, currTailIndex: number) {
 	const head = currPositions[currTailIndex - 1];
 	const tail = currPositions[currTailIndex];
 	// console.log(currPositions)
 
-	if (head[0] === tail[0] && head[1] === tail[1]) {
-		// don't move since head on top of tail
-		return;
-	}
-
-	if (!isInRadius(head, tail)) {
-		// horizontal / vertical moves
-		if (head[0] === tail[0] || head[1] === tail[1]) {
-			determineMovesForAxis(head, tail)
-				.forEach(move =>
-					moveKnot(currPositions, move, currTailIndex)
-				);
-
-			// return;
-		}
-
-		// diagonal moves
-		else {
-			determineMovesForDiagonal(head, tail)
-				.forEach(move =>
-					moveKnot(currPositions, move, currTailIndex)
-				);
-		}
-	}
+	determineMoves(head, tail)
+		.forEach(move => moveKnot(currPositions, move, currTailIndex));
 
 	positionVisited.add(currPositions[currPositions.length - 1].toString());
 }
 
 function moveHead(currPositions: Positions, dir: Direction, moveAmount: number) {
-	console.log(`===========================`);
-	console.log(`${dir} ${moveAmount}:`);
-	console.log(`===========================`);
+	// console.log(`===========================`);
+	// console.log(`${dir} ${moveAmount}:`);
+	// console.log(`===========================`);
 	for (let i = 0; i < moveAmount; i++) {
 		moveKnot(currPositions, dir, 0);
 
 		for (let j = 1; j < currPositions.length; j++) {
 			// console.log(currPositions)
 
-			followTail(currPositions, dir, j);
+			followTail(currPositions, j);
 		}
 		// console.log(currPositions)
 		// console.log(`---------------------------`);
